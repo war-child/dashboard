@@ -10,7 +10,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
     if (index === 0) { 
         return `<div class="details">
                     <h2>${cityName} (${weatherItem.dt_txt.split(" ")[0]})</h2>
-                    <h6>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}°F</h6>
+                    <h6>Temperature: ${(weatherItem.main.temp).toFixed(2)}°F</h6>
                     <h6>Wind: ${weatherItem.wind.speed} M/S</h6>
                     <h6>Humidity: ${weatherItem.main.humidity}%</h6>
                 </div>
@@ -22,7 +22,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
         return `<li class="card">
                     <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
                     <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
-                    <h6>Temp: ${(weatherItem.main.temp - 273.15).toFixed(2)}°F</h6>
+                    <h6>Temp: ${(weatherItem.main.temp).toFixed(2)}°F</h6>
                     <h6>Wind: ${weatherItem.wind.speed} M/S</h6>
                     <h6>Humidity: ${weatherItem.main.humidity}%</h6>
                 </li>`;
@@ -33,7 +33,7 @@ const getWeatherDetails = (cityName, latitude, longitude) => {
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_KEY}&units=imperial`;
 
     fetch(WEATHER_API_URL).then(response => response.json()).then(data => {
-        // Filter the forecasts to display one per day
+        
         const uniqueForecastDays = [];
         const fiveDaysForecast = data.list.filter(forecast => {
             const forecastDate = new Date(forecast.dt_txt).getDate();
@@ -42,12 +42,12 @@ const getWeatherDetails = (cityName, latitude, longitude) => {
             }
         });
 
-        // Clear previous weather data
+        
         cityInput.value = "";
         currentWeatherDiv.innerHTML = "";
         weatherCardsDiv.innerHTML = "";
 
-        // Build weather cards 
+        
         fiveDaysForecast.forEach((weatherItem, index) => {
             const html = createWeatherCard(cityName, weatherItem, index);
             if (index === 0) {
@@ -66,7 +66,7 @@ const getCityCoordinates = () => {
     if (cityName === "") return;
     const API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
 
-    // Latitude, longitude, and name
+    
     fetch(API_URL).then(response => response.json()).then(data => {
         if (!data.length) return alert(`No coordinates found for ${cityName}`);
         const { lat, lon, name } = data[0];
@@ -79,7 +79,7 @@ const getCityCoordinates = () => {
 const getUserCoordinates = () => {
     navigator.geolocation.getCurrentPosition(
         position => {
-            const { latitude, longitude } = position.coords; // coordinates of user location
+            const { latitude, longitude } = position.coords; 
             
             const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
             fetch(API_URL).then(response => response.json()).then(data => {
@@ -89,7 +89,7 @@ const getUserCoordinates = () => {
                 alert("An error occurred retrieving the city name");
             });
         },
-        error => { // Show alert if user denied the location permission
+        error => { 
             if (error.code === error.PERMISSION_DENIED) {
                 alert("Location request denied, reset location permission to grant access again");
             } else {
@@ -98,6 +98,7 @@ const getUserCoordinates = () => {
         });
 }
 //check db folder
+//check warchild folder
 locationButton.addEventListener("click", getUserCoordinates);
 searchButton.addEventListener("click", getCityCoordinates);
 cityInput.addEventListener("keyup", e => e.key === "Enter" && getCityCoordinates());
